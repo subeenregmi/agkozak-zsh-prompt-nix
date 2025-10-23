@@ -1,10 +1,12 @@
-# agkozak Zsh Prompt
+# agkozak Zsh Prompt Nix
 
 [![MIT License](img/mit_license.svg)](https://opensource.org/licenses/MIT)
 [![GitHub tag](https://img.shields.io/github/tag/agkozak/agkozak-zsh-prompt.svg)](https://GitHub.com/agkozak/agkozak-zsh-prompt/tags/)
 ![Zsh version 4.3.11 and higher](img/zsh_4.3.11_plus.svg)
 [![GitHub stars](https://img.shields.io/github/stars/agkozak/agkozak-zsh-prompt.svg)](https://github.com/agkozak/agkozak-zsh-prompt/stargazers)
 [![Chat on Gitter](https://img.shields.io/gitter/room/:user/:repo.svg)](https://gitter.im/agkozak-zsh-prompt/Lobby#)
+
+> NOTE! This fork is to add some test to show that you are inside a nix shell. 
 
 The agkozak Zsh Prompt is an asynchronous color Git prompt that uses basic ASCII symbols to show:
 

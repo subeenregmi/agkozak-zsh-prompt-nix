@@ -76,6 +76,7 @@
 #                                           background (legacy; deprecated;
 #                                           use %j)
 #
+# psvar[12]     %12v                        Name of nix directory
 
 # EPOCHSECONDS is needed to display command execution time
 (( $+EPOCHSECONDS )) || zmodload zsh/datetime
@@ -153,6 +154,7 @@ typeset -g AGKOZAK_PROMPT_DEBUG \
            AGKOZAK_COLORS_PROMPT_CHAR \
            AGKOZAK_COLORS_CMD_EXEC_TIME \
            AGKOZAK_COLORS_VIRTUALENV \
+           AGKOZAK_COLORS_NIX \
            AGKOZAK_COLORS_BG_STRING \
            AGKOZAK_LEFT_PROMPT_ONLY \
            AGKOZAK_MULTILINE \
@@ -219,6 +221,7 @@ fi
 : ${AGKOZAK_COLORS_CMD_EXEC_TIME:=default}
 : ${AGKOZAK_COLORS_VIRTUALENV:=green}
 : ${AGKOZAK_COLORS_BG_STRING:=magenta}
+: ${AGKOZAK_COLORS_NIX:=white}
 
 # Whether or not to display the Git status in the left prompt (default: off)
 : ${AGKOZAK_LEFT_PROMPT_ONLY:=0}
@@ -242,6 +245,7 @@ fi
 : ${AGKOZAK_BLANK_LINES:=0}
 # Whether or not to display the virtual environment
 : ${AGKOZAK_SHOW_VIRTUALENV:=1}
+: ${AGKOZAK_SHOW_NIX_DIR:=1}
 # Whether or not to indicate if a job is running in the background
 : ${AGKOZAK_SHOW_BG:=1}
 # Characters to put around the command execution time (default: nothing)
@@ -876,6 +880,21 @@ prompt_agkozak_precmd() {
     psvar[10]=${${VIRTUAL_ENV:t}:-${CONDA_DEFAULT_ENV//[$'\t\r\n']/}}
   fi
 
+  # check if we are inside a nix shell
+  if [[ -n $IN_NIX_SHELL ]]; then
+    if [[ -n $NIX_SHELL_NAME ]]; then
+      psvar[12]=$NIX_SHELL_NAME
+    elif [[ -f flake.nix ]]; then
+      psvar[12]="${PWD:t} (flake)"
+    elif [[ -f shell.nix ]]; then
+      psvar[12]="${PWD:t}"
+    else
+      psvar[12]="nix-shell"
+    fi
+  else
+    psvar[12]=""
+  fi
+
   # Cache the Git version
   if (( ${AGKOZAK_SHOW_STASH:-1} )); then
     typeset -gx AGKOZAK_GIT_VERSION
@@ -961,6 +980,9 @@ _agkozak_prompt_strings() {
     AGKOZAK[PROMPT]+='%B%F{${AGKOZAK_COLORS_PATH:-blue}}%2v%f%b'
     if (( ${AGKOZAK_SHOW_VIRTUALENV:-1} )); then
       AGKOZAK[PROMPT]+='%(10V. %F{${AGKOZAK_COLORS_VIRTUALENV:-green}}${AGKOZAK_VIRTUALENV_CHARS[1]-[}%10v${AGKOZAK_VIRTUALENV_CHARS[2]-]}%f.)'
+    fi
+    if (( ${AGKOZAK_SHOW_NIX_DIR:-1} )); then
+      AGKOZAK[PROMPT]+='%(12V. %F{${AGKOZAK_COLORS_NIX:-white}}[%12v]%f.)'
     fi
     if (( ${AGKOZAK_SHOW_BG:-1} )); then
       AGKOZAK[PROMPT]+='%(1j. %F{${AGKOZAK_COLORS_BG_STRING:-magenta}}%j${AGKOZAK_BG_STRING:-j}%f.)'
